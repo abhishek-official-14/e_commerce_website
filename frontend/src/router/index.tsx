@@ -3,6 +3,8 @@ import { ProtectedRoute } from '../components/common/ProtectedRoute';
 import { AppLayout } from '../components/layout/AppLayout';
 import { AuthPage } from '../pages/AuthPage';
 import { CartPage } from '../pages/CartPage';
+import { CheckoutPage } from '../pages/CheckoutPage';
+import { CheckoutSuccessPage } from '../pages/CheckoutSuccessPage';
 import { HomePage } from '../pages/HomePage';
 import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { ProductListPage } from '../pages/ProductListPage';
@@ -20,6 +22,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CartPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'checkout',
+        element: (
+          <ProtectedRoute>
+            <CheckoutPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'checkout/success/:orderId',
+        element: (
+          <ProtectedRoute>
+            <CheckoutSuccessPage />
           </ProtectedRoute>
         )
       },
