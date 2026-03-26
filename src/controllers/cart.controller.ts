@@ -40,10 +40,16 @@ export const addItemToCart = catchAsync(async (req: Request, res: Response) => {
   const cart = (await Cart.findOne({ user: userId })) ?? (await Cart.create({ user: userId, items: [] }));
 
   const itemIndex = cart.items.findIndex((item) => item.product.toString() === productId);
+  const nextQuantity = itemIndex >= 0 ? cart.items[itemIndex].quantity + quantity : quantity;
+
+  if (nextQuantity > product.stock) {
+    throw new ApiError(400, `Only ${product.stock} units available in stock`);
+  }
+
   if (itemIndex >= 0) {
-    cart.items[itemIndex].quantity += quantity;
+    cart.items[itemIndex].quantity = nextQuantity;
   } else {
-    cart.items.push({ product: product._id, quantity });
+    cart.items.push({ product: product._id, quantity: nextQuantity });
   }
 
   await cart.save();
@@ -70,9 +76,18 @@ export const updateCartItemQuantity = catchAsync(async (req: Request, res: Respo
     throw new ApiError(404, 'Cart not found');
   }
 
+  const product = await Product.findOne({ _id: productId, isActive: true });
+  if (!product) {
+    throw new ApiError(404, 'Product not found');
+  }
+
   const item = cart.items.find((cartItem) => cartItem.product.toString() === productId);
   if (!item) {
     throw new ApiError(404, 'Item not found in cart');
+  }
+
+  if (quantity > product.stock) {
+    throw new ApiError(400, `Only ${product.stock} units available in stock`);
   }
 
   item.quantity = quantity;

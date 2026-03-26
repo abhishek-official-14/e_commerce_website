@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Types } from 'mongoose';
 import streamifier from 'streamifier';
 import cloudinary from '../config/cloudinary';
 import { Product } from '../models/product.model';
@@ -226,7 +227,7 @@ export const addOrUpdateReview = catchAsync(async (req: Request, res: Response) 
     existingReview.updatedAt = new Date();
   } else {
     product.reviews.push({
-      user: userId as any,
+      user: new Types.ObjectId(userId),
       rating,
       comment
     });
