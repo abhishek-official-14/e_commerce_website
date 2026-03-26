@@ -12,6 +12,10 @@ Production-ready backend with JWT auth, MongoDB, role-based access, validation, 
 - Request validation with Zod
 - Security middleware: Helmet, CORS, Rate Limiting
 - Global error handling
+- Product module with admin CRUD
+- Search, filter, pagination on product listing
+- Stock-aware purchase validation
+- Cloudinary image upload integration
 
 ## Project Structure
 
@@ -63,6 +67,12 @@ npm start
 - `GET /api/v1/users/me` (auth required)
 - `GET /api/v1/users` (admin only)
 - `GET /health`
+- `POST /api/v1/products` (admin only, multipart/form-data)
+- `PATCH /api/v1/products/:id` (admin only, multipart/form-data)
+- `DELETE /api/v1/products/:id` (admin only)
+- `GET /api/v1/products` (public, only active products)
+- `GET /api/v1/products/:id` (public, only active products)
+- `POST /api/v1/products/:id/purchase` (auth required, prevents out-of-stock purchases)
 
 ## Example Register Payload
 
