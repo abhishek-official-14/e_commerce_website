@@ -39,6 +39,16 @@ export const Navbar = () => {
           >
             Cart ({cartCount})
           </NavLink>
+          {user?.role === 'admin' && (
+            <NavLink
+              to="/admin/dashboard"
+              className={({ isActive }) =>
+                `text-sm font-medium transition ${isActive ? 'text-brand-600' : 'text-slate-600 hover:text-brand-600'}`
+              }
+            >
+              Admin
+            </NavLink>
+          )}
           {token ? (
             <button className="text-sm font-semibold text-slate-700" onClick={() => dispatch(logout())}>
               Logout{user?.name ? ` (${user.name})` : ''}
