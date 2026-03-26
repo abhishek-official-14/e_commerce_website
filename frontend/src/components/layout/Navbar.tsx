@@ -1,15 +1,11 @@
 import { Link, NavLink } from 'react-router-dom';
-import { useAppSelector } from '../../hooks/redux';
-
-const navItems = [
-  { to: '/', label: 'Home' },
-  { to: '/products', label: 'Products' },
-  { to: '/cart', label: 'Cart' },
-  { to: '/auth', label: 'Login/Register' }
-];
+import { logout } from '../../features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 export const Navbar = () => {
+  const dispatch = useAppDispatch();
   const cartCount = useAppSelector((state) => state.cart.items.length);
+  const { token, user } = useAppSelector((state) => state.auth);
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -19,18 +15,44 @@ export const Navbar = () => {
         </Link>
 
         <nav className="flex items-center gap-3 sm:gap-5">
-          {navItems.map((item) => (
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${isActive ? 'text-brand-600' : 'text-slate-600 hover:text-brand-600'}`
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/products"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${isActive ? 'text-brand-600' : 'text-slate-600 hover:text-brand-600'}`
+            }
+          >
+            Products
+          </NavLink>
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${isActive ? 'text-brand-600' : 'text-slate-600 hover:text-brand-600'}`
+            }
+          >
+            Cart ({cartCount})
+          </NavLink>
+          {token ? (
+            <button className="text-sm font-semibold text-slate-700" onClick={() => dispatch(logout())}>
+              Logout{user?.name ? ` (${user.name})` : ''}
+            </button>
+          ) : (
             <NavLink
-              key={item.to}
-              to={item.to}
+              to="/auth"
               className={({ isActive }) =>
                 `text-sm font-medium transition ${isActive ? 'text-brand-600' : 'text-slate-600 hover:text-brand-600'}`
               }
             >
-              {item.label}
-              {item.to === '/cart' ? ` (${cartCount})` : ''}
+              Login/Register
             </NavLink>
-          ))}
+          )}
         </nav>
       </div>
     </header>

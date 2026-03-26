@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { useAppDispatch } from '../../hooks/redux';
-import { addToCart } from '../../features/cart/cartSlice';
+import { addItemToCartApi, addToCart } from '../../features/cart/cartSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import type { Product } from '../../types';
 
 interface ProductCardProps {
@@ -9,6 +9,16 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.auth.token);
+
+  const handleAddToCart = () => {
+    if (token) {
+      void dispatch(addItemToCartApi({ productId: product._id, quantity: 1 }));
+      return;
+    }
+
+    dispatch(addToCart(product));
+  };
 
   return (
     <article className="card flex h-full flex-col">
@@ -25,7 +35,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <Link to={`/products/${product._id}`} className="btn-secondary">
             Details
           </Link>
-          <button className="btn-primary" onClick={() => dispatch(addToCart(product))}>
+          <button className="btn-primary" onClick={handleAddToCart}>
             Add to Cart
           </button>
         </div>

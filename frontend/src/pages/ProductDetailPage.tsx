@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { addToCart } from '../features/cart/cartSlice';
+import { addItemToCartApi, addToCart } from '../features/cart/cartSlice';
 import { fetchProductById } from '../features/products/productSlice';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 
@@ -8,12 +8,26 @@ export const ProductDetailPage = () => {
   const { productId = '' } = useParams();
   const dispatch = useAppDispatch();
   const { selectedProduct, loading, error } = useAppSelector((state) => state.products);
+  const token = useAppSelector((state) => state.auth.token);
 
   useEffect(() => {
     if (productId) {
       void dispatch(fetchProductById(productId));
     }
   }, [dispatch, productId]);
+
+  const handleAddToCart = () => {
+    if (!selectedProduct) {
+      return;
+    }
+
+    if (token) {
+      void dispatch(addItemToCartApi({ productId: selectedProduct._id, quantity: 1 }));
+      return;
+    }
+
+    dispatch(addToCart(selectedProduct));
+  };
 
   if (loading) return <section className="container-page">Loading product...</section>;
   if (error) return <section className="container-page text-red-500">{error}</section>;
@@ -35,7 +49,7 @@ export const ProductDetailPage = () => {
           <h1 className="mt-3 text-3xl font-bold">{selectedProduct.name}</h1>
           <p className="mt-3 text-slate-600">{selectedProduct.description}</p>
           <p className="mt-4 text-2xl font-bold text-brand-700">${selectedProduct.price.toFixed(2)}</p>
-          <button className="btn-primary mt-6" onClick={() => dispatch(addToCart(selectedProduct))}>
+          <button className="btn-primary mt-6" onClick={handleAddToCart}>
             Add to Cart
           </button>
         </div>

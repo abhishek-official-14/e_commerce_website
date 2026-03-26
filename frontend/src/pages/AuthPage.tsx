@@ -1,14 +1,25 @@
-import { FormEvent, useState } from 'react';
-import { login, register } from '../features/auth/authSlice';
+import { FormEvent, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { clearAuthError, login, register } from '../features/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 
 export const AuthPage = () => {
   const dispatch = useAppDispatch();
-  const { loading, error, user } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { loading, error, token } = useAppSelector((state) => state.auth);
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const fromPath = (location.state as { from?: string } | null)?.from ?? '/cart';
+
+  useEffect(() => {
+    if (token) {
+      navigate(fromPath, { replace: true });
+    }
+  }, [token, navigate, fromPath]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,6 +30,11 @@ export const AuthPage = () => {
     }
 
     void dispatch(register({ name, email, password }));
+  };
+
+  const toggleMode = () => {
+    setIsLogin((current) => !current);
+    dispatch(clearAuthError());
   };
 
   return (
@@ -56,14 +72,13 @@ export const AuthPage = () => {
           </div>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
-          {user && <p className="text-sm text-green-600">Welcome, {user.name}!</p>}
 
           <button className="btn-primary w-full" disabled={loading}>
             {loading ? 'Please wait...' : isLogin ? 'Login' : 'Register'}
           </button>
         </form>
 
-        <button className="mt-4 text-sm font-semibold text-brand-600" onClick={() => setIsLogin((current) => !current)}>
+        <button className="mt-4 text-sm font-semibold text-brand-600" onClick={toggleMode}>
           {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
         </button>
       </div>
