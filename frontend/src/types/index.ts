@@ -25,3 +25,28 @@ export interface AuthResponse {
   user: User;
   accessToken: string;
 }
+
+export interface ProductQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+export interface ProductResponse {
+  data: Product[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface CartResponse {
+  _id: string;
+  user: string;
+  items: CartItem[];
+}
