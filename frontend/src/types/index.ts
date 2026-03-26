@@ -14,6 +14,15 @@ export interface User {
   name: string;
   email: string;
   role: 'user' | 'admin';
+  isBlocked?: boolean;
+}
+
+export interface AdminUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: 'user' | 'admin';
+  isBlocked: boolean;
 }
 
 export interface CartItem {

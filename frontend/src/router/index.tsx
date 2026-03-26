@@ -1,6 +1,12 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { AdminRoute } from '../components/common/AdminRoute';
 import { ProtectedRoute } from '../components/common/ProtectedRoute';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import { AppLayout } from '../components/layout/AppLayout';
+import { AdminDashboardPage } from '../pages/AdminDashboardPage';
+import { AdminOrdersPage } from '../pages/AdminOrdersPage';
+import { AdminProductsPage } from '../pages/AdminProductsPage';
+import { AdminUsersPage } from '../pages/AdminUsersPage';
 import { AuthPage } from '../pages/AuthPage';
 import { CartPage } from '../pages/CartPage';
 import { CheckoutPage } from '../pages/CheckoutPage';
@@ -42,6 +48,20 @@ export const router = createBrowserRouter([
         )
       },
       { path: 'auth', element: <AuthPage /> }
+    ]
+  },
+  {
+    path: '/admin',
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
+    children: [
+      { path: 'dashboard', element: <AdminDashboardPage /> },
+      { path: 'products', element: <AdminProductsPage /> },
+      { path: 'orders', element: <AdminOrdersPage /> },
+      { path: 'users', element: <AdminUsersPage /> }
     ]
   }
 ]);
