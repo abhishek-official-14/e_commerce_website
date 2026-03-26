@@ -15,6 +15,14 @@ export interface IOrder extends Document {
   totalAmount: number;
   address: string;
   status: IOrderStatus;
+  paymentCurrency: string;
+  paymentAmountInSubunits: number;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
+  paymentVerifiedAt?: Date;
+  stockReduced: boolean;
+  paymentFailureReason?: string;
 }
 
 const orderItemSnapshotSchema = new Schema<IOrderItemSnapshot>(
@@ -45,7 +53,15 @@ const orderSchema = new Schema<IOrder>(
       enum: ['pending', 'paid', 'shipped', 'delivered', 'failed'],
       default: 'pending',
       index: true
-    }
+    },
+    paymentCurrency: { type: String, required: true, trim: true, uppercase: true, default: 'INR' },
+    paymentAmountInSubunits: { type: Number, required: true, min: 1 },
+    razorpayOrderId: { type: String, trim: true, unique: true, sparse: true, index: true },
+    razorpayPaymentId: { type: String, trim: true },
+    razorpaySignature: { type: String, trim: true },
+    paymentVerifiedAt: { type: Date },
+    stockReduced: { type: Boolean, default: false },
+    paymentFailureReason: { type: String, trim: true }
   },
   {
     timestamps: true,
