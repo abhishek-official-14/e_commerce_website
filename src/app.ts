@@ -10,6 +10,7 @@ const app = express();
 
 app.use(helmet());
 app.use(cors());
+app.use('/api/v1/orders/razorpay/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '10kb' }));
 
 app.use(
