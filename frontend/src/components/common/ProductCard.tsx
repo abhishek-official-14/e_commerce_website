@@ -30,6 +30,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       <div className="mt-4 flex flex-1 flex-col">
         <h3 className="text-lg font-semibold">{product.name}</h3>
         <p className="mt-1 text-sm text-slate-500">{product.description}</p>
+        <p className="mt-2 text-sm text-amber-600">
+          ⭐ {product.averageRating?.toFixed(1) ?? '0.0'} ({product.totalReviews ?? 0} reviews)
+        </p>
         <p className="mt-3 text-lg font-bold text-brand-700">${product.price.toFixed(2)}</p>
         <div className="mt-4 flex items-center gap-2">
           <Link to={`/products/${product._id}`} className="btn-secondary">

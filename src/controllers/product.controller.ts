@@ -49,6 +49,12 @@ const getUploadedImageUrls = async (files: Express.Multer.File[] | undefined): P
   return Promise.all(files.map((file) => uploadToCloudinary(file.buffer)));
 };
 
+const recomputeRatings = (reviews: { rating: number }[]) => {
+  const totalReviews = reviews.length;
+  const averageRating = totalReviews === 0 ? 0 : Number((reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(2));
+  return { totalReviews, averageRating };
+};
+
 export const createProduct = catchAsync(async (req: Request, res: Response) => {
   const uploadedImageUrls = await getUploadedImageUrls(req.files as Express.Multer.File[] | undefined);
   const bodyImages = parseImagesFromBody(req.body.images);
@@ -159,7 +165,7 @@ export const getAllProducts = catchAsync(async (req: Request, res: Response) => 
 });
 
 export const getSingleProduct = catchAsync(async (req: Request, res: Response) => {
-  const product = await Product.findOne({ _id: req.params.id, isActive: true });
+  const product = await Product.findOne({ _id: req.params.id, isActive: true }).populate('reviews.user', 'name');
 
   if (!product) {
     throw new ApiError(404, 'Product not found');
@@ -197,4 +203,61 @@ export const purchaseProduct = catchAsync(async (req: Request, res: Response) =>
       inStock: product.stock > 0
     }
   });
+});
+
+
+export const addOrUpdateReview = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  if (!userId) {
+    throw new ApiError(401, 'Unauthorized');
+  }
+
+  const product = await Product.findOne({ _id: req.params.id, isActive: true }).populate('reviews.user', 'name');
+  if (!product) {
+    throw new ApiError(404, 'Product not found');
+  }
+
+  const { rating, comment } = req.body as { rating: number; comment: string };
+
+  const existingReview = product.reviews.find((review) => review.user.toString() === userId);
+  if (existingReview) {
+    existingReview.rating = rating;
+    existingReview.comment = comment;
+    existingReview.updatedAt = new Date();
+  } else {
+    product.reviews.push({
+      user: userId as any,
+      rating,
+      comment
+    });
+  }
+
+  const ratings = recomputeRatings(product.reviews);
+  product.totalReviews = ratings.totalReviews;
+  product.averageRating = ratings.averageRating;
+
+  await product.save();
+  await product.populate('reviews.user', 'name');
+
+  res.status(200).json({ success: true, message: 'Review submitted successfully', data: product });
+});
+
+export const deleteMyReview = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  if (!userId) {
+    throw new ApiError(401, 'Unauthorized');
+  }
+
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    throw new ApiError(404, 'Product not found');
+  }
+
+  product.reviews = product.reviews.filter((review) => review.user.toString() !== userId);
+  const ratings = recomputeRatings(product.reviews);
+  product.totalReviews = ratings.totalReviews;
+  product.averageRating = ratings.averageRating;
+  await product.save();
+
+  res.status(200).json({ success: true, message: 'Review removed', data: product });
 });

@@ -1,3 +1,14 @@
+export interface ProductReview {
+  user: {
+    _id: string;
+    name: string;
+  };
+  rating: number;
+  comment: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface Product {
   _id: string;
   name: string;
@@ -7,6 +18,21 @@ export interface Product {
   stock: number;
   images: string[];
   inStock: boolean;
+  averageRating: number;
+  totalReviews: number;
+  reviews?: ProductReview[];
+}
+
+export interface Address {
+  _id?: string;
+  label: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  isDefault?: boolean;
 }
 
 export interface User {
@@ -15,6 +41,8 @@ export interface User {
   email: string;
   role: 'user' | 'admin';
   isBlocked?: boolean;
+  wishlist?: Product[];
+  addresses?: Address[];
 }
 
 export interface AdminUser {
@@ -71,7 +99,11 @@ export interface Order {
   _id: string;
   user: string;
   items: OrderItemSnapshot[];
+  subtotalAmount: number;
+  discountAmount: number;
+  shippingCharges: number;
   totalAmount: number;
+  couponCode?: string;
   address: string;
   status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'failed';
   paymentCurrency: string;

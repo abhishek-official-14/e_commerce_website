@@ -1,6 +1,8 @@
+import { useSeo } from '../hooks/useSeo';
 import { Link } from 'react-router-dom';
 
 export const HomePage = () => {
+  useSeo({ title: 'ShopLite | Home', description: 'Discover top products at ShopLite.' });
   return (
     <section className="container-page">
       <div className="grid items-center gap-8 rounded-3xl bg-gradient-to-r from-brand-700 to-brand-500 p-8 text-white md:grid-cols-2 md:p-12">

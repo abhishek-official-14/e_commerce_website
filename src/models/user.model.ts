@@ -1,7 +1,19 @@
 import bcrypt from 'bcrypt';
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 
 export type IUserRole = 'user' | 'admin';
+
+export interface IUserAddress {
+  _id?: Types.ObjectId;
+  label: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  isDefault: boolean;
+}
 
 export interface IUser extends Document {
   name: string;
@@ -9,8 +21,24 @@ export interface IUser extends Document {
   password: string;
   role: IUserRole;
   isBlocked: boolean;
+  wishlist: Types.ObjectId[];
+  addresses: IUserAddress[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
+
+const addressSchema = new Schema<IUserAddress>(
+  {
+    label: { type: String, required: true, trim: true },
+    line1: { type: String, required: true, trim: true },
+    line2: { type: String, trim: true },
+    city: { type: String, required: true, trim: true },
+    state: { type: String, required: true, trim: true },
+    postalCode: { type: String, required: true, trim: true },
+    country: { type: String, required: true, trim: true, default: 'India' },
+    isDefault: { type: Boolean, default: false }
+  },
+  { _id: true }
+);
 
 const userSchema = new Schema<IUser>(
   {
@@ -37,6 +65,14 @@ const userSchema = new Schema<IUser>(
     isBlocked: {
       type: Boolean,
       default: false
+    },
+    wishlist: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+      default: []
+    },
+    addresses: {
+      type: [addressSchema],
+      default: []
     }
   },
   {

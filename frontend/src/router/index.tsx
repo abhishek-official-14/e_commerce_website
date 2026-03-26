@@ -14,6 +14,7 @@ import { CheckoutSuccessPage } from '../pages/CheckoutSuccessPage';
 import { HomePage } from '../pages/HomePage';
 import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { ProductListPage } from '../pages/ProductListPage';
+import { WishlistPage } from '../pages/WishlistPage';
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,14 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'products', element: <ProductListPage /> },
       { path: 'products/:productId', element: <ProductDetailPage /> },
+      {
+        path: 'wishlist',
+        element: (
+          <ProtectedRoute>
+            <WishlistPage />
+          </ProtectedRoute>
+        )
+      },
       {
         path: 'cart',
         element: (
