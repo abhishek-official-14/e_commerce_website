@@ -71,3 +71,14 @@ export const purchaseProductSchema = z.object({
     quantity: z.coerce.number().int().min(1).default(1)
   })
 });
+
+
+export const createReviewSchema = z.object({
+  params: z.object({
+    id: z.string().min(1)
+  }),
+  body: z.object({
+    rating: z.coerce.number().int().min(1).max(5),
+    comment: z.string().trim().min(5).max(1000)
+  })
+});

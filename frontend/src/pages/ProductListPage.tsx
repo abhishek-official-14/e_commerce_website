@@ -1,9 +1,11 @@
 import { ChangeEvent, useEffect } from 'react';
+import { useSeo } from '../hooks/useSeo';
 import { ProductCard } from '../components/common/ProductCard';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { fetchProducts, updateFilters } from '../features/products/productSlice';
 
 export const ProductListPage = () => {
+  useSeo({ title: 'Products | ShopLite', description: 'Browse products with filters, ratings and best prices.' });
   const dispatch = useAppDispatch();
   const { products, loading, error, filters, meta } = useAppSelector((state) => state.products);
 

@@ -9,11 +9,27 @@ export interface IOrderItemSnapshot {
   quantity: number;
 }
 
+export interface IOrderAddressSnapshot {
+  fullName: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  phone?: string;
+}
+
 export interface IOrder extends Document {
   user: Types.ObjectId;
   items: IOrderItemSnapshot[];
+  subtotalAmount: number;
+  discountAmount: number;
+  shippingCharges: number;
   totalAmount: number;
+  couponCode?: string;
   address: string;
+  shippingAddress: IOrderAddressSnapshot;
   status: IOrderStatus;
   paymentCurrency: string;
   paymentAmountInSubunits: number;
@@ -35,6 +51,20 @@ const orderItemSnapshotSchema = new Schema<IOrderItemSnapshot>(
   { _id: false }
 );
 
+const orderAddressSnapshotSchema = new Schema<IOrderAddressSnapshot>(
+  {
+    fullName: { type: String, required: true, trim: true },
+    line1: { type: String, required: true, trim: true },
+    line2: { type: String, trim: true },
+    city: { type: String, required: true, trim: true },
+    state: { type: String, required: true, trim: true },
+    postalCode: { type: String, required: true, trim: true },
+    country: { type: String, required: true, trim: true },
+    phone: { type: String, trim: true }
+  },
+  { _id: false }
+);
+
 const orderSchema = new Schema<IOrder>(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
@@ -46,8 +76,13 @@ const orderSchema = new Schema<IOrder>(
         message: 'Order must contain at least one item'
       }
     },
+    subtotalAmount: { type: Number, required: true, min: 0, default: 0 },
+    discountAmount: { type: Number, required: true, min: 0, default: 0 },
+    shippingCharges: { type: Number, required: true, min: 0, default: 0 },
     totalAmount: { type: Number, required: true, min: 0 },
+    couponCode: { type: String, trim: true, uppercase: true },
     address: { type: String, required: true, trim: true },
+    shippingAddress: { type: orderAddressSnapshotSchema, required: true },
     status: {
       type: String,
       enum: ['pending', 'paid', 'shipped', 'delivered', 'failed'],

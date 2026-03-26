@@ -31,6 +31,16 @@ export const Navbar = () => {
           >
             Products
           </NavLink>
+          {token && (
+            <NavLink
+              to="/wishlist"
+              className={({ isActive }) =>
+                `text-sm font-medium transition ${isActive ? 'text-brand-600' : 'text-slate-600 hover:text-brand-600'}`
+              }
+            >
+              Wishlist
+            </NavLink>
+          )}
           <NavLink
             to="/cart"
             className={({ isActive }) =>

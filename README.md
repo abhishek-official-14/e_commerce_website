@@ -18,6 +18,11 @@ Production-ready backend with JWT auth, MongoDB, role-based access, validation, 
 - Cloudinary image upload integration
 - Cart persistence in MongoDB (add/remove/update quantity)
 - Order lifecycle with snapshot items + status updates
+- Wishlist and multiple address management
+- Product reviews and aggregate ratings
+- Coupon/discount and shipping charge logic
+- SEO meta tag support in frontend pages
+- Order placed and payment success email notification hooks
 
 ## Project Structure
 
