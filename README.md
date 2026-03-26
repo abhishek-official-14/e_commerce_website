@@ -16,6 +16,8 @@ Production-ready backend with JWT auth, MongoDB, role-based access, validation, 
 - Search, filter, pagination on product listing
 - Stock-aware purchase validation
 - Cloudinary image upload integration
+- Cart persistence in MongoDB (add/remove/update quantity)
+- Order lifecycle with snapshot items + status updates
 
 ## Project Structure
 
@@ -73,6 +75,14 @@ npm start
 - `GET /api/v1/products` (public, only active products)
 - `GET /api/v1/products/:id` (public, only active products)
 - `POST /api/v1/products/:id/purchase` (auth required, prevents out-of-stock purchases)
+- `GET /api/v1/cart/me` (auth required)
+- `POST /api/v1/cart/items` (auth required)
+- `PATCH /api/v1/cart/items` (auth required)
+- `DELETE /api/v1/cart/items/:productId` (auth required)
+- `POST /api/v1/orders` (auth required, creates `pending` order before payment)
+- `GET /api/v1/orders/my-orders` (auth required)
+- `GET /api/v1/orders` (admin only)
+- `PATCH /api/v1/orders/:id/status` (admin only)
 
 ## Example Register Payload
 
