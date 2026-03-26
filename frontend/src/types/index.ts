@@ -50,3 +50,29 @@ export interface CartResponse {
   user: string;
   items: CartItem[];
 }
+
+export interface OrderItemSnapshot {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+export interface Order {
+  _id: string;
+  user: string;
+  items: OrderItemSnapshot[];
+  totalAmount: number;
+  address: string;
+  status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'failed';
+  paymentCurrency: string;
+  paymentAmountInSubunits: number;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
+  paymentVerifiedAt?: string;
+  stockReduced: boolean;
+  paymentFailureReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}

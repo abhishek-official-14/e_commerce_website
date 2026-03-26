@@ -1,10 +1,11 @@
 import { useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { fetchMyCart, removeItemFromCartApi, updateCartItemApi } from '../features/cart/cartSlice';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 
 export const CartPage = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { items, loading, error } = useAppSelector((state) => state.cart);
 
   useEffect(() => {
@@ -74,8 +75,8 @@ export const CartPage = () => {
           <h3 className="text-lg font-semibold">Order Summary</h3>
           <p className="mt-2 text-sm text-slate-500">Subtotal</p>
           <p className="text-2xl font-bold text-brand-700">${total.toFixed(2)}</p>
-          <button className="btn-primary mt-4 w-full" disabled>
-            Checkout (Coming soon)
+          <button className="btn-primary mt-4 w-full" onClick={() => navigate('/checkout')}>
+            Proceed to Checkout
           </button>
         </aside>
       </div>
